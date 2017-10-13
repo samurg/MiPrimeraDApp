@@ -24,6 +24,7 @@ App = {
   },
 
   initWeb3: function() {
+
     if (typeof web3 !== 'undefined') {
       App.web3Provider = web3.currentProvider;
       web3 = new Web3(web3.currentProvider);
@@ -32,7 +33,6 @@ App = {
       App.web3Provider = new web3.providers.HttpProvider('http://localhost:8545');
       web3 = new Web3(App.web3Provider);
     }
-
     return App.initContract();
   },
 
@@ -48,13 +48,13 @@ App = {
       // Use our contract to retieve and mark the adopted pets.
       return App.markAdopted();
     });
-
     return App.bindEvents();
   },
 
   bindEvents: function() {
     $(document).on('click', '.btn-adopt', App.handleAdopt);
   },
+
 
   handleAdopt: function() {
     event.preventDefault();
