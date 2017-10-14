@@ -15,6 +15,8 @@ App = {
         petTemplate.find('.pet-age').text(data[i].age);
         petTemplate.find('.pet-location').text(data[i].location);
         petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
+        petTemplate.find('.btn-adopt').attr('data-price', data[i].price);
+        petTemplate.find('.pet-price').text(data[i].price);
 
         petsRow.append(petTemplate.html());
       }
@@ -24,7 +26,6 @@ App = {
   },
 
   initWeb3: function() {
-
     if (typeof web3 !== 'undefined') {
       App.web3Provider = web3.currentProvider;
       web3 = new Web3(web3.currentProvider);
@@ -33,6 +34,7 @@ App = {
       App.web3Provider = new web3.providers.HttpProvider('http://localhost:8545');
       web3 = new Web3(App.web3Provider);
     }
+
     return App.initContract();
   },
 
@@ -48,6 +50,7 @@ App = {
       // Use our contract to retieve and mark the adopted pets.
       return App.markAdopted();
     });
+
     return App.bindEvents();
   },
 
@@ -55,25 +58,21 @@ App = {
     $(document).on('click', '.btn-adopt', App.handleAdopt);
   },
 
-
   handleAdopt: function() {
     event.preventDefault();
 
     var petId = parseInt($(event.target).data('id'));
-
+    var petPrice = parseInt($(event.target).data('price'));
     var adoptionInstance;
-
+    var petPriceWei = web3.toWei(petPrice, 'ether');
     web3.eth.getAccounts(function(error, accounts) {
       if (error) {
         console.log(error);
       }
-
       var account = accounts[0];
-
       App.contracts.Adoption.deployed().then(function(instance) {
         adoptionInstance = instance;
-
-        return adoptionInstance.adopt(petId, {from: account});
+        return adoptionInstance.adopt(petId, {from: account, value: petPriceWei});
       }).then(function(result) {
         return App.markAdopted();
       }).catch(function(err) {
@@ -98,7 +97,7 @@ App = {
     }).catch(function(err) {
       console.log(err.message);
     });
-  }
+  },
 
 };
 

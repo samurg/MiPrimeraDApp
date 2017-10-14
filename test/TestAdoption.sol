@@ -8,11 +8,12 @@ contract TestAdoption {
 	Adoption adoption = Adoption(DeployedAddresses.Adoption());
 
 	function testUserCanAdoptPet(){
-		uint returnedId = adoption.adopt(8);
-
+		uint returnedId = adoption.adopt(8,2);
+		uint balance = adoption.getBalance();
 		uint expected = 8;
 
 		Assert.equal(returnedId, expected, "Adoption of pet ID 8 should be recorded.");
+		Assert.equal(balance, 2, "Probar que el balance es el correcto");
 	}
 
 	function testGetAdopterAddressByPetId(){
