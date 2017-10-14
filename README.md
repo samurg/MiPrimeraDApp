@@ -13,7 +13,13 @@ $ truffle compile
 
 Open a new terminal
 
-testrpc
+testrpc -a 2 -d
+
+Copy Mnemonic and Paste in Metamask Private Network
+
+  Chrome Extension -> https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn
+  Example:
+  Mnemonic -> myth like bonus scare over problem client lizard pioneer submit female collect
 
 On the first terminal
 
