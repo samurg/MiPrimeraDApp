@@ -94,11 +94,26 @@ App = {
           $('.panel-pet').eq(i).find('button').text('Success...').attr('disabled', true);
         }
       }
+      return App.obtenerBalance();
     }).catch(function(err) {
       console.log(err.message);
     });
   },
 
+  obtenerBalance: function(){
+    var adoptionInstance;
+
+    App.contracts.Adoption.deployed().then(function(instance) {
+      adoptionInstance = instance;
+
+      return adoptionInstance.getBalance.call();
+   }).then(function(bal) {
+      var balanceTemplate = $('#balanceTemplate');
+      balanceTemplate.find('.balance').text(web3.fromWei(bal,'ether'));
+    }).catch(function(err) {
+      console.log(err.message);
+    });
+  }
 };
 
 $(function() {
