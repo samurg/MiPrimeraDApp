@@ -16,6 +16,8 @@ App = {
         petTemplate.find('.pet-location').text(data[i].location);
         petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
         petTemplate.find('.btn-adopt').attr('data-price', data[i].price);
+        petTemplate.find('.btn-return').attr('data-id', data[i].id);
+        petTemplate.find('.btn-return').attr('data-price', data[i].price);
         petTemplate.find('.pet-price').text(data[i].price);
 
         petsRow.append(petTemplate.html());
@@ -56,6 +58,7 @@ App = {
 
   bindEvents: function() {
     $(document).on('click', '.btn-adopt', App.handleAdopt);
+    $(document).on('click', '.btn-return', App.handleReturn);
   },
 
   handleAdopt: function() {
@@ -81,6 +84,29 @@ App = {
     });
   },
 
+  handleReturn: function(){
+    event.preventDefault();
+
+    var petId = parseInt($(event.target).data('id'));
+    var petPrice = parseInt($(event.target).data('price'));
+    var adoptionInstance;
+    var petPriceWei = web3.toWei(petPrice, 'ether');
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+      var account = accounts[0];
+      App.contracts.Adoption.deployed().then(function(instance) {
+        adoptionInstance = instance;
+        return adoptionInstance.devolver(petId,{from: account});
+      }).then(function(result) {
+        if(result == true) alert("Devuelto");
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  },
+
   markAdopted: function(adopters, account) {
     var adoptionInstance;
 
@@ -91,7 +117,7 @@ App = {
     }).then(function(adopters) {
       for (i = 0; i < adopters.length; i++) {
         if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
-          $('.panel-pet').eq(i).find('button').text('Success...').attr('disabled', true);
+          $('.panel-pet').eq(i).find('btn-adopt').text('Success...').attr('disabled', true);
         }
       }
       return App.obtenerBalance();
